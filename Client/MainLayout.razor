@@ -1,0 +1,45 @@
+﻿@inherits LayoutComponentBase
+
+<Dialog></Dialog>
+
+
+
+<main>
+    <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="-10 -10 355.7 805.8">
+        <path class="logo" style="fill:#FF584F" stroke="#FF584F" stroke-width="1px" d="M69.8 0v173H0v148.2h69.8v257.9l.6 13.5 1 13.1 1.4 12.5 1.9 12.2 1.9 11.6 2.7 11 2.7 10.7 3.4 10.1 3.6 9.4 4 9.2 4.3 8.9 4.9 8.2 5.2 7.7 2.7 3.6 2.7 3.4 3 3.3 3.2 3.4 3 3.4 3.3 3 3.4 3 3.3 2.8 7.4 5.5 7.6 4.9 8.2 4.9 8.9 4.2 9.1 3.7 9.5 3.4 10.1 3 10.6 2.8 11 2.1 11.7 1.8 11.8 1.5 12.6 1 12.7.6 72.5.3V650.2l-7.1-.3-4.9-.3-4.6-.7-4.5-.5-4.3-1-4.3-1.2-3.9-1.5-4-1.5-3.6-2.2-3.7-1.9-3.4-2.3-3-2.5-3.1-2.7-3-3.1-2.7-3-2.8-3.7-2.4-3.4-2.2-4-2.1-3.9-2.2-4.3-1.8-4.6-1.5-4.9-1.5-4.8-1.3-5.2-1.2-5.2-1.2-5.9-.9-5.7-.6-6.1-.6-6.2-.3-6.3-.4-6.8V313.6h-73.9v-133h73.9V0z" />
+        </svg>
+    </div>
+    <aside>
+        <div class="menu">
+            <div class="search-bar">
+                <InputText class="search-bar" @bind-Value="_searchTerm" @bind-Value:after="() => StartSearch()" />
+            </div>
+            <NavLink href="/" Match="NavLinkMatch.All">Contributions</NavLink>
+            <NavLink href="/conferences" Match="NavLinkMatch.All">Conferences</NavLink>
+            <NavLink href="/speakers" Match="NavLinkMatch.All">Speakers</NavLink>
+        </div>
+
+        <div class="profile">
+            <img src="/assets/profile.png" alt="Profile Pic" class="profile--pic" />
+
+            <p>Patrick Jahr</p>
+        </div>
+    </aside>
+    <div class="content">
+        @Body
+    </div>
+    <div class="bottom-bar">
+        <div>
+            <NavLink href="/" Match="NavLinkMatch.All"><i class="fa-brands fa-angellist"></i></NavLink>
+        </div>
+        <div>
+            <NavLink href="/conferences" Match="NavLinkMatch.All"><i class="fa-solid fa-ear-listen"></i></NavLink>
+        </div>
+        <div>
+            <NavLink href="/speakers" Match="NavLinkMatch.All"><i class="fa-solid fa-people-group"></i></NavLink>
+        </div>
+    </div>
+</main>
+
+

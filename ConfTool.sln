@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfTool.Client", "Client\ConfTool.Client.csproj", "{B4B354AD-C504-48BF-A074-95D17C93BE44}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfTool.Server", "Server\ConfTool.Server.csproj", "{01B37271-592C-43DE-8235-9660529E0AAD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfTool.Shared", "Shared\ConfTool.Shared.csproj", "{C4D0000D-E539-4E5E-B45A-226372FBF5A5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4B354AD-C504-48BF-A074-95D17C93BE44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4B354AD-C504-48BF-A074-95D17C93BE44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4B354AD-C504-48BF-A074-95D17C93BE44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4B354AD-C504-48BF-A074-95D17C93BE44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01B37271-592C-43DE-8235-9660529E0AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01B37271-592C-43DE-8235-9660529E0AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01B37271-592C-43DE-8235-9660529E0AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01B37271-592C-43DE-8235-9660529E0AAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4D0000D-E539-4E5E-B45A-226372FBF5A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4D0000D-E539-4E5E-B45A-226372FBF5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4D0000D-E539-4E5E-B45A-226372FBF5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4D0000D-E539-4E5E-B45A-226372FBF5A5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

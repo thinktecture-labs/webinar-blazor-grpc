@@ -1,0 +1,36 @@
+﻿@page "/speakers"
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="container">
+    <div class="header">
+        <h3>Speakers</h3>
+        <p>Collection of Thinktecture Speakers</p>
+    </div>
+    @if (_loading)
+    {
+        <p>Loading...</p>
+    }
+    else if (!String.IsNullOrEmpty(_errorMessage))
+    {
+        <p>Something went wrong.</p>
+        <p>@_errorMessage</p>
+    }
+    else if (_speakers.Count > 0)
+    {
+        <div class="speakers-collection">
+            @foreach (var speaker in _speakers)
+            {
+                <Card Title="@($"{speaker.FirstName} {speaker.LastName}")" Description="@speaker.Abstract">
+                    <HeaderContent>
+                        <img class="user-image" alt="" src="@speaker.ImageUrl"/>
+                    </HeaderContent>
+                </Card>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No speakers found!</p>
+    }
+</div>

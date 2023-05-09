@@ -1,0 +1,18 @@
+﻿<div id="@Id" class="@_cssClass" @onclick="@CardClicked">
+    <div class="card-header">
+        @HeaderContent
+        <span class="title">
+            @Title
+        </span>
+    </div>
+    @if (!String.IsNullOrWhiteSpace(Description))
+    {
+        <div class="@(ChildContent is null ? "card-content" : "card-content line")">@Description</div>
+    }
+    @if (ChildContent is not null)
+    {
+        <div class="card-footer">
+            @ChildContent
+        </div>
+    }
+</div>
