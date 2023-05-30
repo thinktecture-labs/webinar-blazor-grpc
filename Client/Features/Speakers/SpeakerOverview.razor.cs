@@ -2,6 +2,8 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using ConfTool.Client.Features.Speakers.State;
 using ConfTool.Shared.Models;
+using static ConfTool.Client.Features.Speakers.Store.SpeakerActions;
+using ConfTool.Client.Features.Speakers.Store;
 
 namespace ConfTool.Client.Features.Speakers
 {
@@ -16,32 +18,8 @@ namespace ConfTool.Client.Features.Speakers
 
         protected override async Task OnInitializedAsync()
         {
-            _dispatcher.Dispatch(new LoadSpeakersAction(string.Empty));
-            _dispatcher.ActionDispatched += _dispatcher_ActionDispatched;
+            _dispatcher.Dispatch(new LoadSpeakersAction());
             await base.OnInitializedAsync();
-        }
-
-        private void _dispatcher_ActionDispatched(object? sender, ActionDispatchedEventArgs e)
-        {
-            if (e.Action.GetType() == typeof(SaveSpeakerSuccessAction))
-            {
-                _dispatcher.Dispatch(new LoadSpeakersAction(string.Empty));
-            }
-        }
-
-        private void OpenEditor(SpeakerDto speaker)
-        {
-            //Console.WriteLine("Clicked speaker");
-            //_dispatcher.Dispatch(new SetEditSpeakerAction(speaker));
-            //_dispatcher.Dispatch(new OpenDialogAction(new DialogContext(typeof(SpeakerEditor), new Dictionary<string, object>
-            //{
-            //}, speaker.Title)));
-        }
-
-        public new void Dispose()
-        {
-            base.Dispose();
-            _dispatcher.ActionDispatched -= _dispatcher_ActionDispatched;
         }
     }
 }

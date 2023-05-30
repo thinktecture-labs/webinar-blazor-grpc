@@ -1,6 +1,7 @@
 ﻿using ConfTool.Server.Services;
 using ConfTool.Shared.Models;
 using ConfTool.Shared.Services;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConfTool.Server.Controllers
@@ -15,21 +16,17 @@ namespace ConfTool.Server.Controllers
         {
             _speakersService = contributionsService ?? throw new ArgumentNullException(nameof(contributionsService));
         }
-        [HttpGet("count")]
-        public async Task<IActionResult> GetSpeakersCountAsync(CancellationToken cancellation = default)
-        {
-            return Ok(await _speakersService.GetSpeakersCountAsync(cancellation));
-        }
 
         [HttpGet]
         public async Task<IActionResult> GetSpeakersAsync([FromQuery] int skip = 0, [FromQuery] int take = 100, CancellationToken cancellation = default)
         {
+            var options = new CallOptions(cancellationToken: cancellation);
             var result = await _speakersService.GetSpeakersAsync(new CollectionRequest
             {
                 Skip = skip,
                 Take = take,
                 SearchTerm = string.Empty
-            });
+            }, new ProtoBuf.Grpc.CallContext(options));
             if (result.Any())
             {
                 return Ok(result);
@@ -41,7 +38,8 @@ namespace ConfTool.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSpeakerAsync([FromRoute] Guid id, CancellationToken cancellation = default)
         {
-            var result = await _speakersService.GetSpeakerAsync(new IdRequest {Id = id});
+            var options = new CallOptions(cancellationToken: cancellation);
+            var result = await _speakersService.GetSpeakerAsync(new IdRequest {Id = id}, new ProtoBuf.Grpc.CallContext(options));
             if (result is not null)
             {
                 return Ok(result);
@@ -60,11 +58,12 @@ namespace ConfTool.Server.Controllers
 
             try
             {
+                var options = new CallOptions(cancellationToken: cancellation);
                 await _speakersService.AddOrUpdateSpeakerAsync(new AddOrUpdateRequest<SpeakerDto>
                 {
                     Id = speaker.Id,
                     Dto = speaker
-                });
+                }, new ProtoBuf.Grpc.CallContext(options));
             }
             catch (Exception ex)
             {
@@ -79,7 +78,8 @@ namespace ConfTool.Server.Controllers
         {
             try
             {
-                await _speakersService.DeleteSpeakerAsync(new IdRequest {Id = id});
+                var options = new CallOptions(cancellationToken: cancellation);
+                await _speakersService.DeleteSpeakerAsync(new IdRequest {Id = id}, new ProtoBuf.Grpc.CallContext(options));
             }
             catch (Exception ex)
             {

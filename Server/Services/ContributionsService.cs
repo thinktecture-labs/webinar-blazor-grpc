@@ -16,12 +16,7 @@ namespace ConfTool.Server.Services
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<int> GetContributionsCountAsync()
-        {
-            return await _dbContext.Contributions.CountAsync();
-        }
-
-        public async Task<ICollection<ContributionDto>> GetContributionsAsync(CollectionRequest request)
+        public async Task<ICollection<ContributionDto>> GetContributionsAsync(CollectionRequest request, CallContext context = default)
         {
             var query = string.IsNullOrWhiteSpace(request.SearchTerm)
                 ? _dbContext.Contributions
@@ -54,16 +49,16 @@ namespace ConfTool.Server.Services
                         ImageUrl = cs.Speaker.PictureUrl,
                         Abstract = cs.Speaker.Abstract
                     }).Distinct().ToList()
-                }).ToListAsync();
+                }).ToListAsync(context.CancellationToken);
             return result;
         }
 
-        public async Task<ContributionDto?> GetContributionAsync(IdRequest request)
+        public async Task<ContributionDto?> GetContributionAsync(IdRequest request, CallContext context = default)
         {
             var contribution = await _dbContext.Contributions
                 .Include(c => c.ContributionSpeakers)
                 .ThenInclude(cs => cs.Speaker)
-                .FirstOrDefaultAsync(c => c.Id == request.Id);
+                .FirstOrDefaultAsync(c => c.Id == request.Id, context.CancellationToken);
             return contribution is not null
                 ? new ContributionDto
                 {
@@ -84,14 +79,16 @@ namespace ConfTool.Server.Services
                 : null;
         }
 
-        public async Task AddOrUpdateContributionAsync(AddOrUpdateRequest<ContributionDto> request)
+        public async Task AddOrUpdateContributionAsync(AddOrUpdateRequest<ContributionDto> request, CallContext context = default)
         {
             if (request.Dto is null)
             {
                 return;
             }
             
-            var contribution = await _dbContext.Contributions.Include(c => c.ContributionSpeakers).FirstOrDefaultAsync(c => c.Id == request.Dto.Id);
+            var contribution = await _dbContext.Contributions
+                .Include(c => c.ContributionSpeakers)
+                .FirstOrDefaultAsync(c => c.Id == request.Dto.Id, context.CancellationToken);
             if (contribution is not null)
             {
                 contribution.StartDate = request.Dto.StartDate;
@@ -133,10 +130,10 @@ namespace ConfTool.Server.Services
                         ContributionId = id,
                     });
                 }
-                await _dbContext.Contributions.AddAsync(contribution);
+                await _dbContext.Contributions.AddAsync(contribution, context.CancellationToken);
             }
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(context.CancellationToken);
         }
 
         public async IAsyncEnumerable<string> UpdatedContributionAsync(CallContext context = default)
@@ -145,7 +142,7 @@ namespace ConfTool.Server.Services
             while (!context.CancellationToken.IsCancellationRequested)
             {
                 _queue.TryDequeue(out string? item);
-                if (!String.IsNullOrWhiteSpace(item))
+                if (!string.IsNullOrWhiteSpace(item))
                 {
                     Console.WriteLine($"UpdatedContributionAsync throw new id {item}.");
                     yield return item;
@@ -155,11 +152,11 @@ namespace ConfTool.Server.Services
             Console.WriteLine("UpdatedContributionAsync is finished.");
         }
 
-        public async Task DeleteContributionAsync(IdRequest request)
+        public async Task DeleteContributionAsync(IdRequest request, CallContext context = default)
         {
         
             var contribution = await _dbContext.Contributions
-                .FirstOrDefaultAsync(c => c.Id == request.Id);
+                .FirstOrDefaultAsync(c => c.Id == request.Id, context.CancellationToken);
 
             if (contribution is not null)
             {

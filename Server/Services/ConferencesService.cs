@@ -2,6 +2,7 @@
 using ConfTool.Shared.Models;
 using ConfTool.Shared.Services;
 using Microsoft.EntityFrameworkCore;
+using ProtoBuf.Grpc;
 
 namespace ConfTool.Server.Services
 {
@@ -14,12 +15,7 @@ namespace ConfTool.Server.Services
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<int> GetConferencesCountAsync(CancellationToken cancellationToken = default)
-        {
-            return await _dbContext.Conferences.CountAsync(cancellationToken);
-        }
-
-        public async Task<IList<ConferenceDto>> GetConferencesAsync(CollectionRequest request)
+        public async Task<IList<ConferenceDto>> GetConferencesAsync(CollectionRequest request, CallContext context = default)
         {
             var result = await _dbContext.Conferences
                 .OrderByDescending(c => c.StartDate)
@@ -33,14 +29,14 @@ namespace ConfTool.Server.Services
                         StartDate = conference.StartDate,
                         EndDate = conference.EndDate,
                     }
-                ).ToListAsync();
+                ).ToListAsync(context.CancellationToken);
             return result?.ToList() ?? new List<ConferenceDto>();
         }
 
-        public async Task<ConferenceDto?> GetConferenceAsync(IdRequest request)
+        public async Task<ConferenceDto?> GetConferenceAsync(IdRequest request, CallContext context = default)
         {
             var conference = await _dbContext.Conferences
-                .FirstOrDefaultAsync(c => c.Id == request.Id);
+                .FirstOrDefaultAsync(c => c.Id == request.Id, context.CancellationToken);
             return conference is not null
                 ? new ConferenceDto
                 {
@@ -53,7 +49,7 @@ namespace ConfTool.Server.Services
                 : null;
         }
 
-        public async Task AddOrUpdateConferenceAsync(AddOrUpdateRequest<ConferenceDto> request)
+        public async Task AddOrUpdateConferenceAsync(AddOrUpdateRequest<ConferenceDto> request, CallContext context = default)
         {
             if (request.Dto is null)
             {
@@ -79,17 +75,17 @@ namespace ConfTool.Server.Services
                     StartDate = request.Dto.StartDate,
                     EndDate = request.Dto.EndDate
                 };
-                await _dbContext.Conferences.AddAsync(conference);
+                await _dbContext.Conferences.AddAsync(conference, context.CancellationToken);
             }
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(context.CancellationToken);
         }
 
-        public async Task DeleteConferenceAsync(IdRequest request)
+        public async Task DeleteConferenceAsync(IdRequest request, CallContext context = default)
         {
             
             var conference = await _dbContext.Conferences
-                .FirstOrDefaultAsync(c => c.Id == request.Id);
+                .FirstOrDefaultAsync(c => c.Id == request.Id, context.CancellationToken);
 
             if (conference is not null)
             {

@@ -1,8 +1,9 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ConfTool.Client.Features.Contributions.State;
-using ConfTool.Client.State;
+using ConfTool.Client.Features.Contributions.Store;
 using ConfTool.Shared.Models;
+using ConfTool.Client.GlobalStore.Dialog;
+using static ConfTool.Client.Features.Contributions.Store.ContributionActions;
 
 namespace ConfTool.Client.Features.Contributions
 {

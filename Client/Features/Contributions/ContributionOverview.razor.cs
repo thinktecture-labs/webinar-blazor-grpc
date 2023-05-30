@@ -2,21 +2,23 @@ using Fluxor;
 using Grpc.Core;
 using Microsoft.AspNetCore.Components;
 using ProtoBuf.Grpc;
-using ConfTool.Client.Features.Contributions.State;
-using ConfTool.Client.State;
 using ConfTool.Shared.Models;
 using ConfTool.Shared.Services;
 using Microsoft.JSInterop;
+using ConfTool.Client.Features.Contributions.Store;
+using ConfTool.Client.GlobalStore.Search;
+using ConfTool.Client.GlobalStore.Dialog;
+using static ConfTool.Client.Features.Contributions.Store.ContributionActions;
 
 namespace ConfTool.Client.Features.Contributions
 {
     public partial class ContributionOverview : IDisposable
     {
+        [Inject] private IJSRuntime _jsRuntime { get; set; } = default!;
         [Inject] private IContributionService _contributionSerivce { get; set; } = default!;
         [Inject] private IDispatcher _dispatcher { get; set; } = default!;
         [Inject] private IState<ContributionState> _state { get; set; } = default!;
         [Inject] private IState<SearchState> _searchState { get; set; } = default!;
-        [Inject] private IJSRuntime _jsRuntime { get; set; } = default!;
 
         private bool _loading => _state.Value.LoadCollection;
         private string _errorMessage => _state.Value.ErrorMessage;
@@ -24,7 +26,7 @@ namespace ConfTool.Client.Features.Contributions
 
         private CancellationTokenSource? _cts;
         private Guid _updatedId = Guid.Empty;
-        private IJSObjectReference _module;
+        private IJSObjectReference? _module;
 
         protected override async Task OnInitializedAsync()
         {

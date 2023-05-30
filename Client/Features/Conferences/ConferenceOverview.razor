@@ -21,7 +21,7 @@
         <div class="conferences-collection">
             @foreach (var conference in _conferences)
             {
-                <Card Title="@conference.Title" Description="@conference.Description" CssClass="conference-item" Clicked="@(() => OpenEditor(conference))">
+                <Card Title="@conference.Title" Description="@conference.Description" CssClass="conference-item">
                 </Card>
             }
         </div>

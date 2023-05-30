@@ -1,6 +1,6 @@
+using ConfTool.Client.GlobalStore.Dialog;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ConfTool.Client.State;
 
 namespace ConfTool.Client.Components
 {

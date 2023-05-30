@@ -1,6 +1,7 @@
 ﻿using ConfTool.Server.Services;
 using ConfTool.Shared.Models;
 using ConfTool.Shared.Services;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConfTool.Server.Controllers
@@ -16,22 +17,17 @@ namespace ConfTool.Server.Controllers
             _conferencesService = conferencesService ?? throw new ArgumentNullException(nameof(conferencesService));
         }
 
-        [HttpGet("count")]
-        public async Task<IActionResult> GetConferencesCountAsync(CancellationToken cancellation = default)
-        {
-            return Ok(await _conferencesService.GetConferencesCountAsync(cancellation));
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetConferencesAsync([FromQuery] int skip = 0, [FromQuery] int take = 100,
             CancellationToken cancellation = default)
         {
+            var options = new CallOptions(cancellationToken: cancellation);
             var result = await _conferencesService.GetConferencesAsync(new CollectionRequest
             {
                 Skip = skip,
                 Take = take,
                 SearchTerm = string.Empty
-            });
+            }, new ProtoBuf.Grpc.CallContext(options));
             if (result.Any())
             {
                 return Ok(result);
@@ -44,7 +40,8 @@ namespace ConfTool.Server.Controllers
         public async Task<IActionResult> GetConferenceAsync([FromRoute] Guid id,
             CancellationToken cancellation = default)
         {
-            var result = await _conferencesService.GetConferenceAsync(new IdRequest { Id = id });
+            var options = new CallOptions(cancellationToken: cancellation);
+            var result = await _conferencesService.GetConferenceAsync(new IdRequest { Id = id }, new ProtoBuf.Grpc.CallContext(options));
             if (result is not null)
             {
                 return Ok(result);
@@ -64,11 +61,12 @@ namespace ConfTool.Server.Controllers
 
             try
             {
+                var options = new CallOptions(cancellationToken: cancellation);
                 await _conferencesService.AddOrUpdateConferenceAsync(new AddOrUpdateRequest<ConferenceDto>
                 {
                     Id = conference.Id,
                     Dto = conference
-                });
+                }, new ProtoBuf.Grpc.CallContext(options));
             }
             catch (Exception ex)
             {
@@ -84,7 +82,8 @@ namespace ConfTool.Server.Controllers
         {
             try
             {
-                await _conferencesService.DeleteConferenceAsync(new IdRequest { Id = id });
+                var options = new CallOptions(cancellationToken: cancellation);
+                await _conferencesService.DeleteConferenceAsync(new IdRequest { Id = id }, new ProtoBuf.Grpc.CallContext(options));
             }
             catch (Exception ex)
             {

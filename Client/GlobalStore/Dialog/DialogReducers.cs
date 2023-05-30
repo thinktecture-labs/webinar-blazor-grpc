@@ -1,20 +1,7 @@
 ﻿using Fluxor;
 
-namespace ConfTool.Client.State
+namespace ConfTool.Client.GlobalStore.Dialog
 {
-    public record DialogContext(Type ComponentType, Dictionary<string, object> Parameters, string DialogTitle);
-
-
-    [FeatureState]
-    public record DialogState
-    {
-        public bool Visible { get; set; }
-        public DialogContext? Context { get; set; } = default!;
-    }
-
-    public record OpenDialogAction(DialogContext Context);
-    public record CloseDialogAction();
-
     public class DialogReducers
     {
         [ReducerMethod]

@@ -21,7 +21,7 @@
         <div class="speakers-collection">
             @foreach (var speaker in _speakers)
             {
-                <Card Title="@($"{speaker.FirstName} {speaker.LastName}")" Description="@speaker.Abstract" Clicked="@(() => OpenEditor(speaker))">
+                <Card Title="@($"{speaker.FirstName} {speaker.LastName}")" Description="@speaker.Abstract">
                     <HeaderContent>
                         <img class="user-image" alt="" src="@speaker.ImageUrl"/>
                     </HeaderContent>

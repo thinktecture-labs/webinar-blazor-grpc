@@ -1,6 +1,7 @@
 ﻿using ConfTool.Server.Services;
 using ConfTool.Shared.Models;
 using ConfTool.Shared.Services;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConfTool.Server.Controllers
@@ -17,22 +18,17 @@ namespace ConfTool.Server.Controllers
                 contributionsService ?? throw new ArgumentNullException(nameof(contributionsService));
         }
 
-        [HttpGet("count")]
-        public async Task<IActionResult> GetContributionsCountAsync(CancellationToken cancellation = default)
-        {
-            return Ok(await _contributionsService.GetContributionsCountAsync());
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetContributionsAsync([FromQuery] int skip = 0, [FromQuery] int take = 100,
             [FromQuery] string? searchTerm = null, CancellationToken cancellation = default)
         {
+            var options = new CallOptions(cancellationToken: cancellation);
             var result = await _contributionsService.GetContributionsAsync(new CollectionRequest
             {
                 SearchTerm = searchTerm ?? string.Empty,
                 Skip = skip,
                 Take = take
-            });
+            }, new ProtoBuf.Grpc.CallContext(options));
             if (result.Any())
             {
                 return Ok(result);
@@ -45,7 +41,8 @@ namespace ConfTool.Server.Controllers
         public async Task<IActionResult> GetContributionAsync([FromRoute] Guid id,
             CancellationToken cancellation = default)
         {
-            var result = await _contributionsService.GetContributionAsync(new IdRequest { Id = id });
+            var options = new CallOptions(cancellationToken: cancellation);
+            var result = await _contributionsService.GetContributionAsync(new IdRequest { Id = id }, new ProtoBuf.Grpc.CallContext(options));
             if (result is not null)
             {
                 return Ok(result);
@@ -65,8 +62,9 @@ namespace ConfTool.Server.Controllers
 
             try
             {
+                var options = new CallOptions(cancellationToken: cancellation);
                 await _contributionsService.AddOrUpdateContributionAsync(new AddOrUpdateRequest<ContributionDto>
-                    { Id = contribution.Id, Dto = contribution });
+                    { Id = contribution.Id, Dto = contribution }, new ProtoBuf.Grpc.CallContext(options));
             }
             catch (Exception ex)
             {
@@ -82,7 +80,8 @@ namespace ConfTool.Server.Controllers
         {
             try
             {
-                await _contributionsService.DeleteContributionAsync(new IdRequest { Id = id });
+                var options = new CallOptions(cancellationToken: cancellation);
+                await _contributionsService.DeleteContributionAsync(new IdRequest { Id = id }, new ProtoBuf.Grpc.CallContext(options));
             }
             catch (Exception ex)
             {

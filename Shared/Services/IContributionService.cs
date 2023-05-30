@@ -36,17 +36,17 @@ public class AddOrUpdateRequest<T>
 public interface IContributionService
 {
     [OperationContract]
-    Task<ICollection<ContributionDto>> GetContributionsAsync(CollectionRequest request);
+    Task<ICollection<ContributionDto>> GetContributionsAsync(CollectionRequest request, CallContext context = default);
     
     [OperationContract]
-    Task<ContributionDto?> GetContributionAsync(IdRequest request);
+    Task<ContributionDto?> GetContributionAsync(IdRequest request, CallContext context = default);
     
     [OperationContract]
-    Task AddOrUpdateContributionAsync(AddOrUpdateRequest<ContributionDto> request);
+    Task AddOrUpdateContributionAsync(AddOrUpdateRequest<ContributionDto> request, CallContext context = default);
     
     [OperationContract]
     IAsyncEnumerable<string> UpdatedContributionAsync(CallContext context = default);
     
     [OperationContract]
-    Task DeleteContributionAsync(IdRequest request);
+    Task DeleteContributionAsync(IdRequest request, CallContext context = default);
 }

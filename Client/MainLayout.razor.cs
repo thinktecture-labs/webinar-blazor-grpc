@@ -1,6 +1,6 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ConfTool.Client.State;
+using ConfTool.Client.GlobalStore.Search;
 
 namespace ConfTool.Client
 {
