@@ -1,28 +1,23 @@
 ﻿using Fluxor;
 using ConfTool.Shared.Models;
-using ConfTool.Shared.Services;
+using System.Net.Http.Json;
 
 namespace ConfTool.Client.Features.Conferences.Store
 {
     public class LoadConferencesEffect : Effect<LoadConferencesAction>
     {
-        private readonly IConferencesService _conferencesService;
+        private readonly HttpClient _httpClient;
 
-        public LoadConferencesEffect(IConferencesService conferencesService)
+        public LoadConferencesEffect(HttpClient httpClient)
         {
-            _conferencesService = conferencesService;
+            _httpClient = httpClient;
         }
 
         public override async Task HandleAsync(LoadConferencesAction action, IDispatcher dispatcher)
         {
             try
             {
-                var result = await _conferencesService.GetConferencesAsync(new CollectionRequest
-                {
-                    Skip = 0,
-                    Take = 100,
-                    SearchTerm = string.Empty
-                });
+                var result = await _httpClient.GetFromJsonAsync<IEnumerable<ConferenceDto>>("/api/v1/conferences");
                 dispatcher.Dispatch(new LoadConferencesActionSuccess(result?.ToList() ?? new List<ConferenceDto>()));
             }
             catch (Exception ex)

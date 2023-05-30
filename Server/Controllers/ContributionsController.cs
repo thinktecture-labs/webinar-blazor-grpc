@@ -22,13 +22,7 @@ namespace ConfTool.Server.Controllers
         public async Task<IActionResult> GetContributionsAsync([FromQuery] int skip = 0, [FromQuery] int take = 100,
             [FromQuery] string? searchTerm = null, CancellationToken cancellation = default)
         {
-            var options = new CallOptions(cancellationToken: cancellation);
-            var result = await _contributionsService.GetContributionsAsync(new CollectionRequest
-            {
-                SearchTerm = searchTerm ?? string.Empty,
-                Skip = skip,
-                Take = take
-            }, new ProtoBuf.Grpc.CallContext(options));
+            var result = await _contributionsService.GetContributionsAsync(skip, take, searchTerm ?? string.Empty, cancellation);
             if (result.Any())
             {
                 return Ok(result);
@@ -42,7 +36,7 @@ namespace ConfTool.Server.Controllers
             CancellationToken cancellation = default)
         {
             var options = new CallOptions(cancellationToken: cancellation);
-            var result = await _contributionsService.GetContributionAsync(new IdRequest { Id = id }, new ProtoBuf.Grpc.CallContext(options));
+            var result = await _contributionsService.GetContributionAsync(id, cancellation);
             if (result is not null)
             {
                 return Ok(result);
@@ -63,25 +57,7 @@ namespace ConfTool.Server.Controllers
             try
             {
                 var options = new CallOptions(cancellationToken: cancellation);
-                await _contributionsService.AddOrUpdateContributionAsync(new AddOrUpdateRequest<ContributionDto>
-                    { Id = contribution.Id, Dto = contribution }, new ProtoBuf.Grpc.CallContext(options));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-
-            return Ok();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteContributionAsync([FromRoute] Guid id,
-            CancellationToken cancellation = default)
-        {
-            try
-            {
-                var options = new CallOptions(cancellationToken: cancellation);
-                await _contributionsService.DeleteContributionAsync(new IdRequest { Id = id }, new ProtoBuf.Grpc.CallContext(options));
+                await _contributionsService.AddOrUpdateContributionAsync(contribution, cancellation);
             }
             catch (Exception ex)
             {

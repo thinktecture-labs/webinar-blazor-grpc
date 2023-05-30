@@ -4,15 +4,9 @@ using ProtoBuf.Grpc;
 
 namespace ConfTool.Shared.Services;
 
-[ServiceContract]
 public interface ISpeakersService
 {
-    [OperationContract]
-    Task<IList<SpeakerDto>> GetSpeakersAsync(CollectionRequest request, CallContext context = default);
-    [OperationContract]
-    Task<SpeakerDto?> GetSpeakerAsync(IdRequest request, CallContext context = default);
-    [OperationContract]
-    Task AddOrUpdateSpeakerAsync(AddOrUpdateRequest<SpeakerDto> request, CallContext context = default);
-    [OperationContract]
-    Task DeleteSpeakerAsync(IdRequest request, CallContext context = default);
+    Task<IList<SpeakerDto>> GetSpeakersAsync(int skip = 0, int take = 1000, CancellationToken cancellationToken = default);
+    Task<SpeakerDto?> GetSpeakerAsync(Guid id, CancellationToken cancellationToken = default);
+    Task AddOrUpdateSpeakerAsync(SpeakerDto dto, CancellationToken cancellationToken = default);
 }

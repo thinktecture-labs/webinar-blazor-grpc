@@ -15,12 +15,12 @@ namespace ConfTool.Server.Services
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<IList<SpeakerDto>> GetSpeakersAsync(CollectionRequest request, CallContext context = default)
+        public async Task<IList<SpeakerDto>> GetSpeakersAsync(int skip = 0, int take = 100, CancellationToken cancellationToken = default)
         {
             var result = await _dbContext.Speakers
                 .OrderBy(c => c.FirstName).ThenBy(c => c.LastName)
-                .Skip(request.Skip)
-                .Take(request.Take)
+                .Skip(skip)
+                .Take(take)
                 .Select(speaker => new SpeakerDto
                 {
                     Id = speaker.Id,
@@ -29,14 +29,14 @@ namespace ConfTool.Server.Services
                     ImageUrl = speaker.PictureUrl,
                     Abstract = speaker.Abstract
                 }
-                ).ToListAsync(context.CancellationToken);
+                ).ToListAsync(cancellationToken);
             return result?.ToList() ?? new List<SpeakerDto>();
         }
 
-        public async Task<SpeakerDto?> GetSpeakerAsync(IdRequest request, CallContext context = default)
+        public async Task<SpeakerDto?> GetSpeakerAsync(Guid id, CancellationToken cancellationToken = default)
         {
             var speaker = await _dbContext.Speakers
-                .FirstOrDefaultAsync(c => c.Id == request.Id, context.CancellationToken);
+                .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
             return speaker is not null
                 ? new SpeakerDto
                 {
@@ -49,20 +49,20 @@ namespace ConfTool.Server.Services
                 : null;
         }
 
-        public async Task AddOrUpdateSpeakerAsync(AddOrUpdateRequest<SpeakerDto> request, CallContext context = default)
+        public async Task AddOrUpdateSpeakerAsync(SpeakerDto dto, CancellationToken cancellationToken = default)
         {
-            if (request.Dto is null)
+            if (dto is null)
             {
                 return;
             }
             
-            var speaker = await _dbContext.Speakers.FirstOrDefaultAsync(c => c.Id == request.Dto.Id, context.CancellationToken);
+            var speaker = await _dbContext.Speakers.FirstOrDefaultAsync(c => c.Id == dto.Id, cancellationToken);
             if (speaker is not null)
             {
-                speaker.FirstName = request.Dto.FirstName;
-                speaker.LastName = request.Dto.LastName;
-                speaker.PictureUrl = request.Dto.ImageUrl;
-                speaker.Abstract = request.Dto.Abstract;
+                speaker.FirstName = dto.FirstName;
+                speaker.LastName = dto.LastName;
+                speaker.PictureUrl = dto.ImageUrl;
+                speaker.Abstract = dto.Abstract;
             }
             else
             {
@@ -70,27 +70,16 @@ namespace ConfTool.Server.Services
                 speaker = new Speaker
                 {
                     Id = id,
-                    FirstName = request.Dto.FirstName,
-                    LastName = request.Dto.LastName,
-                    PictureUrl = request.Dto.ImageUrl,
-                    Abstract = request.Dto.Abstract
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    PictureUrl = dto.ImageUrl,
+                    Abstract = dto.Abstract
                 };
-                await _dbContext.Speakers.AddAsync(speaker, context.CancellationToken);
+                await _dbContext.Speakers.AddAsync(speaker, cancellationToken);
             }
 
-            await _dbContext.SaveChangesAsync(context.CancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-        }
-
-        public async Task DeleteSpeakerAsync(IdRequest request, CallContext context = default)
-        {
-            var speaker = await _dbContext.Speakers
-                .FirstOrDefaultAsync(c => c.Id == request.Id, context.CancellationToken);
-
-            if (speaker is not null)
-            {
-                _dbContext.Speakers.Remove(speaker);
-            }
         }
     }
 }

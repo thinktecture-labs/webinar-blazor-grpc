@@ -1,7 +1,5 @@
 using Fluxor;
-using Grpc.Core;
 using Microsoft.AspNetCore.Components;
-using ProtoBuf.Grpc;
 using ConfTool.Shared.Models;
 using ConfTool.Shared.Services;
 using Microsoft.JSInterop;
@@ -15,7 +13,6 @@ namespace ConfTool.Client.Features.Contributions
     public partial class ContributionOverview : IDisposable
     {
         [Inject] private IJSRuntime _jsRuntime { get; set; } = default!;
-        [Inject] private IContributionService _contributionSerivce { get; set; } = default!;
         [Inject] private IDispatcher _dispatcher { get; set; } = default!;
         [Inject] private IState<ContributionState> _state { get; set; } = default!;
         [Inject] private IState<SearchState> _searchState { get; set; } = default!;
@@ -32,7 +29,6 @@ namespace ConfTool.Client.Features.Contributions
         {
             _dispatcher.Dispatch(new LoadContributionsAction(_searchState.Value.SearchTerm));
             _dispatcher.ActionDispatched += DispatcherOnActionDispatched;
-            await UpdateAvailable();
             await base.OnInitializedAsync();
         }
 
@@ -55,29 +51,7 @@ namespace ConfTool.Client.Features.Contributions
                 }, contribution.Title)));
         }
 
-        private async Task UpdateAvailable()
-        {
-            _cts = new CancellationTokenSource();
-            var options = new CallOptions(cancellationToken: _cts.Token);
-
-            try
-            {
-                await foreach (var id in _contributionSerivce.UpdatedContributionAsync(new CallContext(options)))
-                {
-                    Console.WriteLine($"New id: {id}");
-                    var newId = Guid.Parse(id);
-                    _updatedId = newId;
-                    StateHasChanged();
-                    await ScrollElementIntoView(_updatedId);
-                }
-            }
-            catch (RpcException)
-            {
-            }
-            catch (OperationCanceledException)
-            {
-            }
-        }
+        
 
         private async Task ScrollElementIntoView(Guid id)
         {

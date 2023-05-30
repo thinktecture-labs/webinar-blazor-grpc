@@ -18,16 +18,10 @@ namespace ConfTool.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetConferencesAsync([FromQuery] int skip = 0, [FromQuery] int take = 100,
+        public async Task<IActionResult> GetConferencesAsync([FromQuery] int skip = 0, [FromQuery] int take = 1000,
             CancellationToken cancellation = default)
         {
-            var options = new CallOptions(cancellationToken: cancellation);
-            var result = await _conferencesService.GetConferencesAsync(new CollectionRequest
-            {
-                Skip = skip,
-                Take = take,
-                SearchTerm = string.Empty
-            }, new ProtoBuf.Grpc.CallContext(options));
+            var result = await _conferencesService.GetConferencesAsync(skip, take, cancellation);
             if (result.Any())
             {
                 return Ok(result);
@@ -40,8 +34,7 @@ namespace ConfTool.Server.Controllers
         public async Task<IActionResult> GetConferenceAsync([FromRoute] Guid id,
             CancellationToken cancellation = default)
         {
-            var options = new CallOptions(cancellationToken: cancellation);
-            var result = await _conferencesService.GetConferenceAsync(new IdRequest { Id = id }, new ProtoBuf.Grpc.CallContext(options));
+            var result = await _conferencesService.GetConferenceAsync(id, cancellation);
             if (result is not null)
             {
                 return Ok(result);
@@ -62,28 +55,7 @@ namespace ConfTool.Server.Controllers
             try
             {
                 var options = new CallOptions(cancellationToken: cancellation);
-                await _conferencesService.AddOrUpdateConferenceAsync(new AddOrUpdateRequest<ConferenceDto>
-                {
-                    Id = conference.Id,
-                    Dto = conference
-                }, new ProtoBuf.Grpc.CallContext(options));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-
-            return Ok();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteConferenceAsync([FromRoute] Guid id,
-            CancellationToken cancellation = default)
-        {
-            try
-            {
-                var options = new CallOptions(cancellationToken: cancellation);
-                await _conferencesService.DeleteConferenceAsync(new IdRequest { Id = id }, new ProtoBuf.Grpc.CallContext(options));
+                await _conferencesService.AddOrUpdateConferenceAsync(conference, cancellation);
             }
             catch (Exception ex)
             {

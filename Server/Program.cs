@@ -12,9 +12,6 @@ builder.Services.AddDbContext<ConfToolDbContext>(options => options.UseInMemoryD
 builder.Services.AddScoped<ContributionsService>();
 builder.Services.AddScoped<SpeakersService>();
 builder.Services.AddScoped<ConferencesService>();
-builder.Services.AddGrpc();
-builder.Services.AddCodeFirstGrpc(config => { config.ResponseCompressionLevel = System.IO.Compression.CompressionLevel.Optimal; });
-builder.Services.AddCodeFirstGrpcReflection();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -47,9 +44,6 @@ app.UseGrpcWeb();
 
 app.MapRazorPages();
 app.MapControllers();
-app.MapGrpcService<ContributionsService>().EnableGrpcWeb();
-app.MapGrpcService<ConferencesService>().EnableGrpcWeb();
-app.MapGrpcService<SpeakersService>().EnableGrpcWeb();
 app.MapFallbackToFile("index.html");
 
 app.Run();

@@ -18,15 +18,9 @@ namespace ConfTool.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSpeakersAsync([FromQuery] int skip = 0, [FromQuery] int take = 100, CancellationToken cancellation = default)
+        public async Task<IActionResult> GetSpeakersAsync([FromQuery] int skip = 0, [FromQuery] int take = 1000, CancellationToken cancellation = default)
         {
-            var options = new CallOptions(cancellationToken: cancellation);
-            var result = await _speakersService.GetSpeakersAsync(new CollectionRequest
-            {
-                Skip = skip,
-                Take = take,
-                SearchTerm = string.Empty
-            }, new ProtoBuf.Grpc.CallContext(options));
+            var result = await _speakersService.GetSpeakersAsync(skip, take, cancellation);
             if (result.Any())
             {
                 return Ok(result);
@@ -38,8 +32,7 @@ namespace ConfTool.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSpeakerAsync([FromRoute] Guid id, CancellationToken cancellation = default)
         {
-            var options = new CallOptions(cancellationToken: cancellation);
-            var result = await _speakersService.GetSpeakerAsync(new IdRequest {Id = id}, new ProtoBuf.Grpc.CallContext(options));
+            var result = await _speakersService.GetSpeakerAsync(id, cancellation);
             if (result is not null)
             {
                 return Ok(result);
@@ -59,27 +52,7 @@ namespace ConfTool.Server.Controllers
             try
             {
                 var options = new CallOptions(cancellationToken: cancellation);
-                await _speakersService.AddOrUpdateSpeakerAsync(new AddOrUpdateRequest<SpeakerDto>
-                {
-                    Id = speaker.Id,
-                    Dto = speaker
-                }, new ProtoBuf.Grpc.CallContext(options));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-
-            return Ok();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSpeakerAsync([FromRoute] Guid id, CancellationToken cancellation = default)
-        {
-            try
-            {
-                var options = new CallOptions(cancellationToken: cancellation);
-                await _speakersService.DeleteSpeakerAsync(new IdRequest {Id = id}, new ProtoBuf.Grpc.CallContext(options));
+                await _speakersService.AddOrUpdateSpeakerAsync(speaker, cancellation);
             }
             catch (Exception ex)
             {

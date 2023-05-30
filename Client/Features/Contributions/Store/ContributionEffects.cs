@@ -2,30 +2,27 @@
 using ConfTool.Shared.Models;
 using ConfTool.Shared.Services;
 using static ConfTool.Client.Features.Contributions.Store.ContributionActions;
+using System.Net.Http.Json;
+using System.Net.Http;
+using Microsoft.VisualBasic;
 
 namespace ConfTool.Client.Features.Contributions.Store
 {
     public class ContributionsEffect : Effect<LoadContributionsAction>
     {
-        private readonly IContributionService _contributionService;
+        private readonly HttpClient _httpClient;
 
-        public ContributionsEffect(IContributionService contributionService)
+        public ContributionsEffect(HttpClient httpClient)
         {
-            _contributionService = contributionService;
+            _httpClient = httpClient;
         }
 
         public override async Task HandleAsync(LoadContributionsAction action, IDispatcher dispatcher)
         {
-            try 
+            try
             {
-                var result = await _contributionService.GetContributionsAsync(new CollectionRequest
-                {
-                   SearchTerm = action.SearchTerm,
-                   Skip = 0,
-                   Take = 100
-                } );
-                
-                dispatcher.Dispatch(new LoadContributionsActionSuccess(result));
+                var result = await _httpClient.GetFromJsonAsync<IEnumerable<ContributionDto>>("/api/v1/contributions");
+                dispatcher.Dispatch(new LoadContributionsActionSuccess(result?.ToList() ?? new List<ContributionDto>()));;
             }
             catch (Exception ex)
             {
@@ -36,23 +33,20 @@ namespace ConfTool.Client.Features.Contributions.Store
 
     public class SaveContributionEffect : Effect<SaveContributionAction>
     {
-        private readonly IContributionService _contributionService;
+        private readonly HttpClient _httpClient;
 
-        public SaveContributionEffect(IContributionService contributionService)
+        public SaveContributionEffect(HttpClient httpClient)
         {
-            _contributionService = contributionService ?? throw new ArgumentNullException(nameof(contributionService));
-                    }
+            _httpClient = httpClient;
+        }
 
         public override async Task HandleAsync(SaveContributionAction action, IDispatcher dispatcher)
         {
             try
             {
                 Console.WriteLine($"Speakers: {action.Contribution.Speakers.Count}");
-                await _contributionService.AddOrUpdateContributionAsync(new AddOrUpdateRequest<ContributionDto>
-                    {
-                        Dto = action.Contribution,
-                        Id = action.Contribution.Id
-                    });
+
+                var result = await _httpClient.PostAsJsonAsync("/api/v1/contributions", action.Contribution);
                 dispatcher.Dispatch(new SaveContributionSuccessAction());
             }
             catch (Exception ex)

@@ -1,29 +1,24 @@
 ﻿using Fluxor;
 using ConfTool.Shared.Models;
-using ConfTool.Shared.Services;
 using static ConfTool.Client.Features.Speakers.Store.SpeakerActions;
+using System.Net.Http.Json;
 
 namespace ConfTool.Client.Features.Speakers.State
 {
     public class SpeakersEffect : Effect<LoadSpeakersAction>
     {
-        private readonly ISpeakersService _speakersService;
+        private readonly HttpClient _httpClient;
 
-        public SpeakersEffect(ISpeakersService speakersService)
+        public SpeakersEffect(HttpClient httpClient)
         {
-            _speakersService = speakersService ?? throw new ArgumentNullException(nameof(speakersService));
+            _httpClient = httpClient;
         }
 
         public override async Task HandleAsync(LoadSpeakersAction action, IDispatcher dispatcher)
         {
             try
             {
-                var result = await _speakersService.GetSpeakersAsync(new CollectionRequest
-                {
-                    Skip = 0,
-                    Take = 100,
-                    SearchTerm = string.Empty
-                });
+                var result = await _httpClient.GetFromJsonAsync<IEnumerable<SpeakerDto>>("/api/v1/speakers");
                 dispatcher.Dispatch(new LoadSpeakersActionSuccess(result?.ToList() ?? new List<SpeakerDto>()));
             }
             catch (Exception ex)

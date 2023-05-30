@@ -4,18 +4,9 @@ using ProtoBuf.Grpc;
 
 namespace ConfTool.Shared.Services;
 
-[ServiceContract]
 public interface IConferencesService
 {
-    [OperationContract]
-    Task<IList<ConferenceDto>> GetConferencesAsync(CollectionRequest request, CallContext context = default);
-    
-    [OperationContract]
-    Task<ConferenceDto?> GetConferenceAsync(IdRequest request, CallContext context = default);
-    
-    [OperationContract]
-    Task AddOrUpdateConferenceAsync(AddOrUpdateRequest<ConferenceDto> request, CallContext context = default);
-    
-    [OperationContract]
-    Task DeleteConferenceAsync(IdRequest request, CallContext context = default);
+    Task<IList<ConferenceDto>> GetConferencesAsync(int skip = 0, int take = 1000, CancellationToken cancellationToken = default);
+    Task<ConferenceDto?> GetConferenceAsync(Guid id, CancellationToken cancellationToken = default);
+    Task AddOrUpdateConferenceAsync(ConferenceDto dto, CancellationToken cancellationToken = default);
 }
