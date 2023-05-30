@@ -53,9 +53,9 @@
                     stroke: #FF584F;
                     stroke-dasharray: 5600;
                     stroke-dashoffset: 5600;
-                    animation: fadeIn 2s infinite forwards;
+                    animation: fadeIn 300ms infinite forwards;
                     animation-iteration-count: 1;
-                    animation-delay: 500ms;
+                    /*animation-delay: 500ms;*/
                 }
                 
         @keyframes moveToTop {
@@ -78,14 +78,14 @@
 
         @keyframes fadeIn {
             0% {
-                stroke-dashoffset: 5600;
-                fill: transparent;
-            }
-
-            80% {
                 stroke-dashoffset: 11200;
                 fill: transparent;
             }
+
+            /*80% {
+                stroke-dashoffset: 11200;
+                fill: transparent;
+            }*/
 
             100% {
                 stroke-dashoffset: 11200;
@@ -155,9 +155,9 @@
                 loadingContainer.classList.add('hide');
             });
 
-            logoPath.addEventListener('animationend', () => {
-                logo.classList.add('move');
-            });
+            //logoPath.addEventListener('animationend', () => {
+            //    logo.classList.add('move');
+            //});
         };
     </script>
     <script src="_framework/blazor.webassembly.js"></script>
