@@ -1,0 +1,37 @@
+﻿.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+}
+
+.header {
+    margin-left: 0.5rem;
+}
+
+    .header p {
+        color: var(--theme-color);
+    }
+
+.conferences-collection {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(20.5rem, 1fr));
+    align-content: start;
+    flex: 1;
+    flex-shrink: 0;
+    padding: 0.5rem 1rem 2rem 0.5rem;
+    overflow-y: auto;
+}
+
+::deep .conference-item .card-content {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+::deep .user-image {
+    width: 3rem;
+    border-radius: 50%;
+}

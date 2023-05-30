@@ -1,0 +1,58 @@
+﻿@page "/"
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="container">
+    <div class="header">
+        <h3>Contributions</h3>
+        <p>Collection of Thinktecture Contributions</p>
+    </div>
+    @if (_loading)
+    {
+        <p>Loading...</p>
+    }
+    else if (!String.IsNullOrEmpty(_errorMessage))
+    {
+        <p>Something went wrong.</p>
+        <p>@_errorMessage</p>
+    }
+    else if (_contributions?.Count > 0)
+    {
+        <div class="contributions">
+            @foreach (var contribution in _contributions)
+            {
+                <Card
+                    Id="@contribution.Id.ToString()"
+                    Title="@contribution.Title" 
+                    Description="@contribution.Abstract" 
+                    CssClass="contribution-item"
+                    Active="@(_updatedId == contribution.Id)"
+                    Clicked="@(() => OpenEditor(contribution))">
+                    <ChildContent>
+                        @if (contribution.Speakers.Any())
+                        {
+                            <div class="speakers">
+                                @foreach (var speaker in contribution.Speakers)
+                                {
+                                    @if (String.IsNullOrWhiteSpace(speaker.ImageUrl))
+                                    {
+                                        <div>
+                                            @($"{speaker.FirstName[0]}{speaker.LastName[0]}")
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <img class="user" alt="" src="@speaker.ImageUrl"/>
+                                    }
+                                }
+                            </div>
+                        }
+                    </ChildContent>
+                </Card>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No contributions found!</p>
+    }
+</div>

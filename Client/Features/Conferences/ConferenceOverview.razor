@@ -1,0 +1,33 @@
+﻿@page "/conferences"
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="container">
+    <div class="header">
+        <h3>Conferences</h3>
+        <p>Collection of Thinktecture Conferences</p>
+    </div>
+    @if (_loading)
+    {
+        <p>Loading...</p>
+    }
+    else if (!String.IsNullOrEmpty(_errorMessage))
+    {
+        <p>Something went wrong.</p>
+        <p>@_errorMessage</p>
+    }
+    else if (_conferences.Count > 0)
+    {
+        <div class="conferences-collection">
+            @foreach (var conference in _conferences)
+            {
+                <Card Title="@conference.Title" Description="@conference.Description" CssClass="conference-item" Clicked="@(() => OpenEditor(conference))">
+                </Card>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No conferences found!</p>
+    }
+</div>

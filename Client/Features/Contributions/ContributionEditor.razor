@@ -1,0 +1,54 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@if (_contributionDto is not null)
+{
+    <div class="container">
+        <div class="editor">
+            <div class="section-title">Infos</div>
+            <EditForm Model="_contributionDto">
+                <div class="item">
+                    <label>Title</label>
+                    <InputText @bind-value="_contributionDto.Title" ValueExpression="() => _contributionDto.Title" placeholder="Gib einen Titel ein" />
+                </div>
+                <div class="item row-2">
+                    <label>Start Datum</label>
+                    <InputDate @bind-Value="_contributionDto.StartDate" />
+                </div>
+                <div class="item row-3">
+                    <label>End Datum</label>
+                    <InputDate @bind-Value="_contributionDto.EndDate" />
+                </div>
+                <div class="item right">
+                    <label>Abstract</label>
+                    <InputTextArea @bind-Value="_contributionDto.Abstract" />
+                </div>
+            </EditForm>
+            <div class="section-title">Select speakers</div>
+            <div class="speakers">
+                @foreach (var speaker in _speakers)
+                {
+                    <div class="@(speaker.Selected ? "speaker selected" : "speaker")" @onclick=@(() => SelectSpeaker(speaker.Id))>
+                        <img style="border-radius: 50%;" src="@speaker.Speaker.ImageUrl"/>
+                        <div class="info">
+                            <p>@speaker.Speaker.FirstName @speaker.Speaker.LastName</p>
+                        </div>
+                        @if (speaker.Selected)
+                        {
+                            <!--! Font Awesome Pro 6.4.0 by fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="actions">
+            <Button Appearance="@ButtonAppearance.Outline" OnClick="Cancel">
+                Abbrechen
+            </Button>
+            <Button OnClick="Save">
+                Speichern
+            </Button>
+        </div>
+    </div>
+}
