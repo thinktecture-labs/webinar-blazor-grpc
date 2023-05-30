@@ -10,8 +10,9 @@ namespace ConfTool.Client
 
         private string _searchTerm = string.Empty;
 
-        private void StartSearch()
+        private void StartSearch(string term)
         {
+            _searchTerm = term;
             _dispatcher.Dispatch(new SetSearchTermAction(_searchTerm));
         }
     }

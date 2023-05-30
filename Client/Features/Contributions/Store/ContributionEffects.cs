@@ -21,7 +21,7 @@ namespace ConfTool.Client.Features.Contributions.Store
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<IEnumerable<ContributionDto>>("/api/v1/contributions");
+                var result = await _httpClient.GetFromJsonAsync<IEnumerable<ContributionDto>>($"/api/v1/contributions?searchTerm={action.SearchTerm}");
                 dispatcher.Dispatch(new LoadContributionsActionSuccess(result?.ToList() ?? new List<ContributionDto>()));;
             }
             catch (Exception ex)

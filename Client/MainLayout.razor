@@ -13,7 +13,7 @@
     <aside>
         <div class="menu">
             <div class="search-bar">
-                <InputText class="search-bar" @bind-Value="_searchTerm" @bind-Value:after="() => StartSearch()" />
+                <input class="search-bar" @oninput=@((ChangeEventArgs args) => StartSearch(args.Value?.ToString() ?? string.Empty)) />
             </div>
             <NavLink href="/" Match="NavLinkMatch.All">Contributions</NavLink>
             <NavLink href="/conferences" Match="NavLinkMatch.All">Conferences</NavLink>
