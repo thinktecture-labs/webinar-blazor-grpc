@@ -7,7 +7,7 @@ using ProtoBuf.Grpc;
 
 namespace ConfTool.Server.Services
 {   
-    public class ContributionsService : IContributionService
+    public class ContributionsService
     {
         private readonly ConfToolDbContext _dbContext;
         private static readonly ConcurrentQueue<string> _queue = new();
